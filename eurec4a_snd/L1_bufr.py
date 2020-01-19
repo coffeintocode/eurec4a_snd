@@ -107,7 +107,6 @@ def get_args():
                         ' WARNING, ERROR]',
                         required=False, default="INFO")
 
-    # testing...
     parser.add_argument('-f', '--force', action='store_true', 
                         help="Convert all files inside the '/inputpath'. "
                         "Default behavior is to convert only when the "
@@ -265,10 +264,6 @@ def main(args={}):
             # Downward
             direction_str = 'Descent'
 
-        sounding = expected_unit_check(sounding)
-
-
-        #----------------------------------------------------------------------------
         # Create outputfile with time information from file
         sounding_date = sounding.sounding_start_time
         YYYYMMDDHHMM = sounding.sounding_start_time.strftime('%Y%m%d%H%M')
@@ -304,7 +299,8 @@ def main(args={}):
             if outfile.exists():
                 logging.info("File {} already exists in the destination".format(outfile))
                 continue
-        #----------------------------------------------------------------------------
+
+        sounding = expected_unit_check(sounding)
 
         # after all needed header information is read, the reduced data field
         # is masked for NaN values and an output file produced afterward:
@@ -320,9 +316,9 @@ def main(args={}):
         sounding.longitude = np.ma.masked_invalid(sounding.longitude)
 
         # Calculate additional variables
-        e = thermo.es(sounding.dewpoint, sounding.pressure*100.)
+        e = thermo.es(sounding.dewpoint, sounding.pressure*100)
         sounding.relativehumidity = convert_Tdew_to_measuredRH(sounding)
-        sounding.mixingratio = (thermo.Rd/thermo.Rv)*e/(sounding.pressure*100.-e)*1000.
+        sounding.mixingratio = (thermo.Rd/thermo.Rv)*e/(sounding.pressure*100-e)*1000
 
         # Ascent rate
         sounding = calc_ascentrate(sounding)
