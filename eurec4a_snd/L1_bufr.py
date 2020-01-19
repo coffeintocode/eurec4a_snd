@@ -108,11 +108,10 @@ def get_args():
                         required=False, default="INFO")
 
     # testing...
-    parser.add_argument('-f', '--force', metavar="0",
+    parser.add_argument('-f', '--force', action='store_false', 
                         help="Convert all files inside the '/inputpath'. "
                         "Default behavior is to convert only when the "
-                        "destination files do not exist",
-                        required=False, default=0, type=int)
+                        "destination files do not exist")
 
     parsed_args = vars(parser.parse_args())
 
@@ -152,9 +151,12 @@ def setup_logging(verbose):
         ])
 
 
-def main():
+def main(args={}):
     # Set up global configuration of BCO-MPI-GIT:
-    args = get_args()
+    try:
+        args = get_args()
+    except:
+        assert args!={}, "Arguments are missing"
 
     setup_logging(args['verbose'])
 
@@ -298,7 +300,7 @@ def main():
 
         # Added on Jan 18 2020: Compute and create .nc file only if option force is True
         # or the file does not exist in destination.
-        if not bool(args['force']):
+        if not args.force:
             if outfile.exists():
                 logging.info("File {} already exists in the destination".format(outfile))
                 continue
