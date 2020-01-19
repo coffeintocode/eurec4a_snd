@@ -108,7 +108,7 @@ def get_args():
                         required=False, default="INFO")
 
     # testing...
-    parser.add_argument('-f', '--force', action='store_false', 
+    parser.add_argument('-f', '--force', action='store_true', 
                         help="Convert all files inside the '/inputpath'. "
                         "Default behavior is to convert only when the "
                         "destination files do not exist")
@@ -300,7 +300,7 @@ def main(args={}):
 
         # Added on Jan 18 2020: Compute and create .nc file only if option force is True
         # or the file does not exist in destination.
-        if not args.force:
+        if not args['force']:
             if outfile.exists():
                 logging.info("File {} already exists in the destination".format(outfile))
                 continue
